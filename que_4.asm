@@ -1,22 +1,22 @@
 ORG 0000H
 
-; -------- Clear Accumulator --------
+; -------- Build LOW byte (B0H) --------
 CLR A              ; A = 00H
+ORL A, #80H        ; Set bit 7 → A = 80H
+ORL A, #20H        ; Set bit 5 → A = A0H
+ORL A, #10H        ; Set bit 4 → A = B0H
+MOV R0, A          ; Save LOW byte in R0
 
-; -------- Form 19 logically --------
-ORL A, #11H        ; A = 11H (17)
-ORL A, #03H        ; A = 13H (19)
+; -------- Build HIGH byte (1AH) --------
+CLR A              ; A = 00H
+ORL A, #10H        ; Set bit 4 → A = 10H
+ORL A, #08H        ; Set bit 3 → A = 18H
+ORL A, #02H        ; Set bit 1 → A = 1AH
+MOV B, A           ; Store HIGH byte in B
 
-; -------- Multiply by 100 --------
-MOV B, #64H        ; B = 100 (64H)
-MUL AB             ; AB = 19 � 100 = 1900
-
-; -------- Add 4 logically --------
-ADD A, #04H        ; A = lower byte + 4
-
-; -------- Store Result --------
-MOV 60H, A         ; Store lower byte
-MOV 61H, B         ; Store higher byte
+; -------- Final Result --------
+MOV A, R0          ; A = LOW byte (B0H)
+                   ; B:A = 1AB0H
 
 HERE:
 SJMP HERE
